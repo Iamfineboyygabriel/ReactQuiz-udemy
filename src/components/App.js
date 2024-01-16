@@ -1,178 +1,178 @@
-import { useEffect, useReducer } from "react";
-import Header from "../components/Header";
-import Loader from "../components/Loader";
-import Error from "../components/Error";
-import Main from "../components/Main";
-import StartScreen from "../components/StartScreen";
-import Question from "../components/Question";
-import NextButton from "./NextButton";
-import Progress from "./Progress";
-import FinishScreen from "./FinishScreen";
-import Footer from "./Footer";
-import Timer from "./Timer";
+// import { useEffect, useReducer } from "react";
+// import Header from "../components/Header";
+// import Loader from "../components/Loader";
+// import Error from "../components/Error";
+// import Main from "../components/Main";
+// import StartScreen from "../components/StartScreen";
+// import Question from "../components/Question";
+// import NextButton from "./NextButton";
+// import Progress from "./Progress";
+// import FinishScreen from "./FinishScreen";
+// import Footer from "./Footer";
+// import Timer from "./Timer";
 
-const SECS_PER_QUESTION = 30;
+// const SECS_PER_QUESTION = 30;
 
-//this is where we start all our piece of state
-const initialState = {
-  questions: [],
-  //5 diffrent status that an application can have 'loading', 'error','ready','active','finished'
-  status: "loading",
-  index: 0,
-  answer: null,
-  points: 0,
-  highscore: 0,
-  secondsRemaining: null,
-};
+// //this is where we start all our piece of state
+// const initialState = {
+//   questions: [],
+//   //5 diffrent status that an application can have 'loading', 'error','ready','active','finished'
+//   status: "loading",
+//   index: 0,
+//   answer: null,
+//   points: 0,
+//   highscore: 0,
+//   secondsRemaining: null,
+// };
 
-//then we create an action in our reducer below
-function reducer(state, action) {
-  switch (action.type) {
-    case "dataReceived":
-      return {
-        ...state,
-        questions: action.payload,
-        status: "ready",
-      };
+// //then we create an action in our reducer below
+// function reducer(state, action) {
+//   switch (action.type) {
+//     case "dataReceived":
+//       return {
+//         ...state,
+//         questions: action.payload,
+//         status: "ready",
+//       };
 
-    case "dataFailed":
-      return {
-        ...state,
-        status: "error",
-      };
+//     case "dataFailed":
+//       return {
+//         ...state,
+//         status: "error",
+//       };
 
-    case "start":
-      return {
-        ...state,
-        status: "active",
-        secondsRemaining: state.questions.length * SECS_PER_QUESTION,
-      };
+//     case "start":
+//       return {
+//         ...state,
+//         status: "active",
+//         secondsRemaining: state.questions.length * SECS_PER_QUESTION,
+//       };
 
-    case "newAnswer":
-      //here we are using the state based on the current question index
-      const question = state.questions.at(state.index);
-      return {
-        ...state,
-        answer: action.payload,
-        points:
-          action.payload === question.correctOption
-            ? state.points + question.points
-            : state.points,
-      };
+//     case "newAnswer":
+//       //here we are using the state based on the current question index
+//       const question = state.questions.at(state.index);
+//       return {
+//         ...state,
+//         answer: action.payload,
+//         points:
+//           action.payload === question.correctOption
+//             ? state.points + question.points
+//             : state.points,
+//       };
 
-    case "nextQuestion":
-      return {
-        ...state,
-        index: state.index + 1,
-        answer: null,
-      };
+//     case "nextQuestion":
+//       return {
+//         ...state,
+//         index: state.index + 1,
+//         answer: null,
+//       };
 
-    case "finish":
-      return {
-        ...state,
-        status: "finished",
-        highscore:
-          state.points > state.highscore ? state.points : state.highscore,
-      };
+//     case "finish":
+//       return {
+//         ...state,
+//         status: "finished",
+//         highscore:
+//           state.points > state.highscore ? state.points : state.highscore,
+//       };
 
-    case "Restart":
-      return {
-        ...state,
-        points: 0,
-        highscore: 0,
-        index: 0,
-        answer: null,
-        status: "ready",
-        //or
-        //...initialstate,
-        //questions:state.questions,
-        //status:"ready"
-      };
+//     case "Restart":
+//       return {
+//         ...state,
+//         points: 0,
+//         highscore: 0,
+//         index: 0,
+//         answer: null,
+//         status: "ready",
+//         //or
+//         //...initialstate,
+//         //questions:state.questions,
+//         //status:"ready"
+//       };
 
-    case "tick":
-      return {
-        ...state,
-        secondsRemaining: state.secondsRemaining - 1,
-        status: state.secondsRemaining === 0 ? "finished" : state.status,
-      };
+//     case "tick":
+//       return {
+//         ...state,
+//         secondsRemaining: state.secondsRemaining - 1,
+//         status: state.secondsRemaining === 0 ? "finished" : state.status,
+//       };
 
-    default:
-      throw new Error("Action unknown");
-  }
-}
+//     default:
+//       throw new Error("Action unknown");
+//   }
+// }
 
-function App() {
-  const [
-    { questions, status, index, answer, points, highscore, secondsRemaining },
-    dispatch,
-  ] = useReducer(reducer, initialState);
+// function App() {
+//   const [
+//     { questions, status, index, answer, points, highscore, secondsRemaining },
+//     dispatch,
+//   ] = useReducer(reducer, initialState);
 
-  //here we trying to get the number of questions available, then we pass it as a prop to the component where we need it which is the StartScreen Component
-  const numQuestions = questions.length;
+//   //here we trying to get the number of questions available, then we pass it as a prop to the component where we need it which is the StartScreen Component
+//   const numQuestions = questions.length;
 
-  //here we calculate the highest number of point a user can get
-  const maxPossiblePoints = questions.reduce(
-    (prev, cur) => prev + cur.points,
-    0
-  );
+//   //here we calculate the highest number of point a user can get
+//   const maxPossiblePoints = questions.reduce(
+//     (prev, cur) => prev + cur.points,
+//     0
+//   );
 
-  //standard logic to fetch a data tho the async function is missing
+//   //standard logic to fetch a data tho the async function is missing
 
-  useEffect(function () {
-    fetch("http://localhost:9000/questions") //here we stored the data in a fake api
-      .then((res) => res.json())
-      .then((data) => dispatch({ type: "dataReceived", payload: data }))
-      .catch((err) => dispatch({ type: "dataFailed" }));
-  }, []);
+//   // useEffect(function () {
+//   //   fetch("http://localhost:9000/questions") //here we stored the data in a fake api
+//   //     .then((res) => res.json())
+//   //     .then((data) => dispatch({ type: "dataReceived", payload: data }))
+//   //     .catch((err) => dispatch({ type: "dataFailed" }));
+//   // }, []);
 
-  return (
-    <div className="app">
-      <Header />
-      <Main>
-        {status === "loading" && <Loader />}
-        {status === "error" && <Error />}
-        {status === "ready" && (
-          <StartScreen numQuestions={numQuestions} dispatch={dispatch} />
-        )}
-        {status === "active" && (
-          <>
-            <Progress
-              index={index}
-              numQuestions={numQuestions}
-              points={points}
-              maxPossiblePoints={maxPossiblePoints}
-              answer={answer}
-            />
-            <Question
-              question={questions[index]}
-              dispatch={dispatch}
-              answer={answer}
-            />
-            <Footer>
-              <Timer dispatch={dispatch} secondsRemaining={secondsRemaining} />
-              <NextButton
-                dispatch={dispatch}
-                answer={answer}
-                numQuestions={numQuestions}
-                index={index}
-              />
-            </Footer>
-          </>
-        )}
-        {status === "finished" && (
-          <FinishScreen
-            points={points}
-            maxPossiblePoints={maxPossiblePoints}
-            highscore={highscore}
-            dispatch={dispatch}
-          />
-        )}
-      </Main>
-    </div>
-  );
-}
+//   return (
+//     <div className="app">
+//       <Header />
+//       <Main>
+//         {status === "loading" && <Loader />}
+//         {status === "error" && <Error />}
+//         {status === "ready" && (
+//           <StartScreen numQuestions={numQuestions} dispatch={dispatch} />
+//         )}
+//         {status === "active" && (
+//           <>
+//             <Progress
+//               index={index}
+//               numQuestions={numQuestions}
+//               points={points}
+//               maxPossiblePoints={maxPossiblePoints}
+//               answer={answer}
+//             />
+//             <Question
+//               question={questions[index]}
+//               dispatch={dispatch}
+//               answer={answer}
+//             />
+//             <Footer>
+//               <Timer dispatch={dispatch} secondsRemaining={secondsRemaining} />
+//               <NextButton
+//                 dispatch={dispatch}
+//                 answer={answer}
+//                 numQuestions={numQuestions}
+//                 index={index}
+//               />
+//             </Footer>
+//           </>
+//         )}
+//         {status === "finished" && (
+//           <FinishScreen
+//             points={points}
+//             maxPossiblePoints={maxPossiblePoints}
+//             highscore={highscore}
+//             dispatch={dispatch}
+//           />
+//         )}
+//       </Main>
+//     </div>
+//   );
+// }
 
-export default App;
+// export default App;
 
 //standard logic to fetch a data tho the async function is missing
 //  useEffect(function () {
@@ -228,3 +228,56 @@ export default App;
 //       .then((data) => ({ type: "dataReceived", payload: data }))
 //       .catch((err) => ({ type: "dataFailed" }));
 //   }, []);
+
+
+
+
+
+
+
+
+
+
+
+//ABOVE IS THE CODE BEFORE WE REVIEW DATA FLOW AND PASSED PROPS AND MOST ESPECIALLY THE BEFORE THE USE OF CONTEXT API TO FIX EVERY SMALL PROP DRILLING PROBLEM
+
+import Header from "../components/Header";
+import Loader from "../components/Loader";
+import Error from "../components/Error";
+import Main from "../components/Main";
+import StartScreen from "../components/StartScreen";
+import Question from "../components/Question";
+import NextButton from "./NextButton";
+import Progress from "./Progress";
+import FinishScreen from "./FinishScreen";
+import Footer from "./Footer";
+import Timer from "./Timer";
+import { useQuiz } from "../context/QuixContext";
+
+function App() {
+  const { status } = useQuiz();
+
+  return (
+    <div className="app">
+      <Header />
+      <Main>
+        {status === "loading" && <Loader />}
+        {status === "error" && <Error />}
+        {status === "ready" && <StartScreen />}
+        {status === "active" && (
+          <>
+            <Progress />
+            <Question />
+            <Footer>
+              <Timer />
+              <NextButton />
+            </Footer>
+          </>
+        )}
+        {status === "finished" && <FinishScreen />}
+      </Main>
+    </div>
+  );
+}
+
+export default App;
